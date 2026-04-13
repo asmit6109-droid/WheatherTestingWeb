@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+    }
+
+    .container {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      width: 300px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    input {
+      width: 80%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 10px 15px;
+      border: none;
+      background: #4facfe;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #007bff;
+    }
+
+    .weather {
+      margin-top: 20px;
+    }
+
+    .temp {
+      font-size: 32px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Weather Testing App</h2>
+  <input type="text" id="city" placeholder="Enter city name">
+  <br>
+  <button onclick="getWeather()">Search</button>
+
+  <div class="weather" id="weather"></div>
+</div>
+
+<script>
+  const apiKey = "09dd72534f71460e9db133119261304";
+
+  async function getWeather() {
+    const city = document.getElementById("city").value;
+    const weatherDiv = document.getElementById("weather");
+
+    if (!city) {
+      weatherDiv.innerHTML = "Please enter a city name";
+      return;
+    }
+
+    try {
+      const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}&aqi=yes`);
+      const data = await response.json();
+
+      if (data.error) {
+        weatherDiv.innerHTML = "City not found";
+        return;
+      }
+
+      weatherDiv.innerHTML = `
+        <h3>${data.location.name}, ${data.location.country}</h3>
+        <div class="temp">${data.current.temp_c}°C</div>
+        <p>${data.current.condition.text}</p>
+        <img src="${data.current.condition.icon}" />
+        <p>Humidity: ${data.current.humidity}%</p>
+        <p>Wind: ${data.current.wind_kph} kph</p>
+      `;
+    } catch (error) {
+      weatherDiv.innerHTML = "Error fetching data";
+    }
+  }
+</script>
+
+</body>
+</html>
